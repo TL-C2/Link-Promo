@@ -190,7 +190,7 @@ const BASE = "https://raw.githubusercontent.com/TL-C2/Offerte/main/";
 const PDF_URLS = {
   TIM_CONSUMER:     BASE + "Promo%20Tim%20Consumer.pdf",
   WIND_CONSUMER:    BASE + "Promo%20Wind%20Consumer.pdf",
-  SKY_CONSUMER:     "TODO",
+  SKY_CONSUMER:     BASE + "Promo%20Sky%20Consumer.pdf",
   OPTIMA_CONSUMER:  BASE + "Promo%20Optima%20Consumer.pdf",
   FASTWEB_CONSUMER: BASE + "Promo%20Fastweb%20Consumer.pdf",
   TIM_BUSINESS:     BASE + "Promo%20Tim%20Business.pdf",
@@ -238,9 +238,9 @@ const DATI = {
         nome: "Sky", emoji: "🌐", classe: "gb-sky",
         driveId: () => PDF_URLS.SKY_CONSUMER,
         sezioni: [
-          { id: "p1", icon: "📺", label: "Sky TV",    price: "", page: 1 },
-          { id: "p2", icon: "🌐", label: "Sky WiFi",  price: "", page: 2 },
-          { id: "p3", icon: "✨", label: "TV + WiFi", price: "", page: 3 },
+          { id: "p1", icon: "📶", label: "Sky Wifi",    price: "", page: 1 },
+          { id: "p2", icon: "📶", label: "Sky WiFi Plus",  price: "", page: 2 },
+          { id: "p3", icon: "📋",   label: "Regole Vendibilità", price: "",       page: 3 },
         ]
       },
       OPTIMA: {
