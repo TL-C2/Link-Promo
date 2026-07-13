@@ -171,6 +171,90 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 .sidebar-toggle { display: none !important; }
 .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(30,40,90,.35); z-index: 150; backdrop-filter: blur(4px); }
 
+/* ── CHECKER IBAN ── */
+#iban-fab {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  background: linear-gradient(135deg, #1A1D2E, #2d3260);
+  color: #fff; border: none; border-radius: 50px;
+  padding: 14px 22px; font-size: 13px; font-weight: 800;
+  cursor: pointer; font-family: var(--font);
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 24px rgba(26,29,46,0.35);
+  transition: transform .13s, box-shadow .13s;
+}
+#iban-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(26,29,46,0.45); }
+#iban-fab:active { transform: scale(.97); }
+
+/* Overlay popup */
+#iban-overlay {
+  display: none; position: fixed; inset: 0; z-index: 600;
+  background: rgba(26,29,46,0.45); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+#iban-overlay.open { display: flex; }
+
+#iban-popup {
+  background: #fff; border-radius: 20px;
+  width: 100%; max-width: 440px;
+  box-shadow: 0 24px 60px rgba(26,29,46,0.25);
+  overflow: hidden; animation: popIn .18s ease;
+}
+@keyframes popIn { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.iban-popup-header {
+  background: linear-gradient(135deg, #1A1D2E, #2d3260);
+  padding: 20px 24px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.iban-popup-header h3 { color: #fff; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.iban-close {
+  background: rgba(255,255,255,.15); border: none; color: #fff;
+  width: 30px; height: 30px; border-radius: 50%;
+  font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .13s;
+}
+.iban-close:hover { background: rgba(255,255,255,.28); }
+
+.iban-popup-body { padding: 24px; }
+
+.iban-input-wrap {
+  display: flex; gap: 10px; margin-bottom: 16px;
+}
+#iban-input {
+  flex: 1; border: 1.5px solid var(--border); border-radius: 50px;
+  padding: 12px 18px; font-family: var(--font); font-size: 14px;
+  font-weight: 600; color: var(--text); outline: none;
+  text-transform: uppercase; letter-spacing: 1px;
+  transition: border-color .13s;
+}
+#iban-input:focus { border-color: var(--accent); }
+#iban-check-btn {
+  background: linear-gradient(135deg, #3B6FF0, #7C3AED);
+  color: #fff; border: none; border-radius: 50px;
+  padding: 12px 20px; font-family: var(--font); font-size: 13px;
+  font-weight: 800; cursor: pointer; white-space: nowrap;
+  transition: opacity .13s;
+}
+#iban-check-btn:hover { opacity: .88; }
+
+#iban-result { display: none; border-radius: 14px; padding: 16px 18px; }
+#iban-result.ok    { background: #EDFBF3; border: 1.5px solid #6EDCA0; }
+#iban-result.warn  { background: #FFF8E6; border: 1.5px solid #F5C842; }
+#iban-result.error { background: #FEF0F0; border: 1.5px solid #F87171; }
+
+.iban-result-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+.iban-result-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+.iban-result.ok    .iban-result-title { color: #166534; }
+.iban-result.warn  .iban-result-title { color: #854D0E; }
+.iban-result.error .iban-result-title { color: #991B1B; }
+.iban-result-msg { font-size: 13px; line-height: 1.5; color: var(--muted); }
+.iban-abi-badge {
+  display: inline-block; margin-top: 8px;
+  background: rgba(0,0,0,.06); border-radius: 8px;
+  padding: 4px 10px; font-size: 12px; font-weight: 700;
+  color: var(--text); font-family: monospace;
+}
+
 @media (max-width: 700px) {
   .screen-title { font-size: 22px; }
   .tipo-cards { max-width: 360px; }
@@ -238,17 +322,18 @@ const DATI = {
         nome: "Sky", emoji: "🌐", classe: "gb-sky",
         driveId: () => PDF_URLS.SKY_CONSUMER,
         sezioni: [
-          { id: "p1", icon: "📶", label: "Sky Wifi",    price: "", page: 1 },
-          { id: "p2", icon: "📶", label: "Sky WiFi Plus",  price: "", page: 2 },
-          { id: "p3", icon: "📋",   label: "Regole Vendibilità", price: "",       page: 3 },
+          { id: "p1", icon: "📶", label: "Sky WiFi",           price: "22,90€", page: 1 },
+          { id: "p2", icon: "📶", label: "Sky WiFi Plus",      price: "25,90€", page: 2 },
+          { id: "p3", icon: "📋", label: "Regole Vendibilità", price: "",       page: 3 },
         ]
       },
       OPTIMA: {
         nome: "Optima", emoji: "🟢", classe: "gb-optima",
         driveId: () => PDF_URLS.OPTIMA_CONSUMER,
         sezioni: [
-          { id: "p1", icon: "📶📱", label: "Optima + SIM",       price: "31,90€", page: 1 },
-          { id: "p2", icon: "📋",   label: "Regole Vendibilità", price: "",       page: 2 },
+          { id: "p1", icon: "📶📱", label: "Optima",       price: "27,90€", page: 1 },
+          { id: "p1", icon: "📶📱", label: "Optima + SIM",       price: "31,90€", page: 2 },
+          { id: "p2", icon: "📋",   label: "Regole Vendibilità", price: "",       page: 3 },
         ]
       },
       FASTWEB: {
@@ -287,7 +372,7 @@ const DATI = {
         sezioni: [
           { id: "p1", icon: "📶",   label: "Fastweb Business",       price: "31,95€", page: 1 },
           { id: "p2", icon: "📶📱",label: "Fastweb Business + SIM", price: "39,90€", page: 2 },
-          { id: "p3", icon: "📶",label: "Preventivo Fastweb", price: "65,00€", page: 3 },          
+          { id: "p2", icon: "📶",label: "Preventivo", price: "65,00€", page: 3 },
         ]
       },
       RETELI: {
@@ -372,6 +457,146 @@ const DATI = {
     </div>
   </div>
 </div>
+
+<button id="iban-fab" onclick="apriIban()">🏦 Verifica IBAN</button>
+
+<div id="iban-overlay" onclick="chiudiIbanOverlay(event)">
+  <div id="iban-popup">
+    <div class="iban-popup-header">
+      <h3>🏦 Verifica IBAN</h3>
+      <button class="iban-close" onclick="chiudiIban()">✕</button>
+    </div>
+    <div class="iban-popup-body">
+      <div class="iban-input-wrap">
+        <input id="iban-input" type="text" placeholder="Inserisci IBAN (es. IT60X...)" maxlength="34"
+          oninput="resetRisultato()" onkeydown="if(event.key==='Enter') verificaIban()">
+        <button id="iban-check-btn" onclick="verificaIban()">Verifica</button>
+      </div>
+      <div id="iban-result">
+        <span class="iban-result-icon" id="iban-icon"></span>
+        <div class="iban-result-title" id="iban-title"></div>
+        <div class="iban-result-msg" id="iban-msg"></div>
+        <div class="iban-abi-badge" id="iban-badge" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  REGOLE IBAN
+//  ABI = caratteri 6-9 dell'IBAN italiano (0-indexed: pos 5-9)
+//  Formato IT: IT + 2 check + 1 CIN + 5 ABI + 5 CAB + 12 conto
+// ══════════════════════════════════════════════════════════
+
+// ── ABI bloccati solo per Wind Consumer (lista foto) ──
+const ABI_BLOCCATI_WIND = new Set([
+  "03073","03085","03269","03386","03421","03437","03561",
+  "08026","10312","10681","16346","21950","F0067","F9322",
+  "36960","07087","16367","05385","36058","36017","32494",
+  "03442","03083","03062","03475"
+]);
+const ABI_ING = new Set(["03211"]); // TUTTI - INGBANK (bloccato Wind)
+
+// ── CAB bloccati per TUTTI i gestori ──
+const CAB_BLOCCATI_TUTTI = new Set([
+  "67684", // Intesa Sanpaolo
+  "32974", // UniCredit
+  "05138", // PostePay Evolution
+  "03384", // Libretto Postale
+]);
+
+function estraiCodici(iban) {
+  const clean = iban.replace(/\s/g,'').toUpperCase();
+  // IBAN IT: IT(2) + check(2) + CIN(1) + ABI(5) + CAB(5) + conto(12) = 27
+  if (clean.startsWith('IT') && clean.length >= 15) {
+    return {
+      abi: clean.substring(5, 10),
+      cab: clean.substring(10, 15)
+    };
+  }
+  return null;
+}
+
+function verificaIban() {
+  const raw = document.getElementById('iban-input').value.trim();
+  if (!raw) return;
+
+  const codici = estraiCodici(raw);
+  const risultato = document.getElementById('iban-result');
+  const icon  = document.getElementById('iban-icon');
+  const title = document.getElementById('iban-title');
+  const msg   = document.getElementById('iban-msg');
+  const badge = document.getElementById('iban-badge');
+
+  risultato.style.display = 'block';
+  badge.style.display = 'none';
+
+  if (!codici) {
+    risultato.className = 'warn';
+    icon.textContent  = '⚠️';
+    title.textContent = 'IBAN non riconosciuto';
+    msg.textContent   = 'Inserisci un IBAN italiano valido (inizia con IT e ha 27 caratteri).';
+    return;
+  }
+
+  const { abi, cab } = codici;
+
+  // ── Check 1: CAB bloccato per tutti ──
+  if (CAB_BLOCCATI_TUTTI.has(cab)) {
+    risultato.className = 'error';
+    icon.textContent  = '❌';
+    title.textContent = 'IBAN non utilizzabile';
+    msg.textContent   = 'Questo IBAN non può essere accettato per nessun gestore.';
+    badge.style.display = 'inline-block';
+    badge.textContent = `ABI: ${abi} · CAB: ${cab}`;
+    return;
+  }
+
+  // ── Check 2: ABI bloccato per Wind Consumer ──
+  const isIng = ABI_ING.has(abi);
+  if (ABI_BLOCCATI_WIND.has(abi) || isIng) {
+    risultato.className = 'warn';
+    icon.textContent  = '⚠️';
+    title.textContent = 'IBAN non utilizzabile per WindTre Consumer';
+    msg.textContent   = isIng
+      ? 'Gli IBAN ING Bank non sono accettati per WindTre Consumer. Può essere usato per gli altri gestori.'
+      : 'Questo IBAN non è accettato per WindTre Consumer. Può essere usato per gli altri gestori.';
+    badge.style.display = 'inline-block';
+    badge.textContent = `ABI: ${abi} · CAB: ${cab}`;
+    return;
+  }
+
+  // ── OK ──
+  risultato.className = 'ok';
+  icon.textContent  = '✅';
+  title.textContent = 'IBAN utilizzabile';
+  msg.textContent   = 'Nessuna restrizione rilevata per questo IBAN.';
+  badge.style.display = 'inline-block';
+  badge.textContent = `ABI: ${abi} · CAB: ${cab}`;
+}
+
+function resetRisultato() {
+  const r = document.getElementById('iban-result');
+  r.style.display = 'none';
+  r.className = '';
+}
+
+function apriIban() {
+  document.getElementById('iban-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('iban-input').focus(), 100);
+}
+
+function chiudiIban() {
+  document.getElementById('iban-overlay').classList.remove('open');
+  document.getElementById('iban-input').value = '';
+  resetRisultato();
+}
+
+function chiudiIbanOverlay(e) {
+  if (e.target === document.getElementById('iban-overlay')) chiudiIban();
+}
+</script>
 
 <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">☰ Offerte</button>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="chiudiSidebar()"></div>
