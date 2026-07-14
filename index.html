@@ -331,9 +331,8 @@ const DATI = {
         nome: "Optima", emoji: "🟢", classe: "gb-optima",
         driveId: () => PDF_URLS.OPTIMA_CONSUMER,
         sezioni: [
-          { id: "p1", icon: "📶📱", label: "Optima",       price: "27,90€", page: 1 },
-          { id: "p1", icon: "📶📱", label: "Optima + SIM",       price: "31,90€", page: 2 },
-          { id: "p2", icon: "📋",   label: "Regole Vendibilità", price: "",       page: 3 },
+          { id: "p1", icon: "📶📱", label: "Optima + SIM",       price: "31,90€", page: 1 },
+          { id: "p2", icon: "📋",   label: "Regole Vendibilità", price: "",       page: 2 },
         ]
       },
       FASTWEB: {
@@ -372,7 +371,7 @@ const DATI = {
         sezioni: [
           { id: "p1", icon: "📶",   label: "Fastweb Business",       price: "31,95€", page: 1 },
           { id: "p2", icon: "📶📱",label: "Fastweb Business + SIM", price: "39,90€", page: 2 },
-          { id: "p2", icon: "📶",label: "Preventivo", price: "65,00€", page: 3 },
+          { id: "p3", icon: "📋",   label: "Preventivo Fastweb",     price: "60,00€", page: 3 },
         ]
       },
       RETELI: {
@@ -537,6 +536,16 @@ function verificaIban() {
     icon.textContent  = '⚠️';
     title.textContent = 'IBAN non riconosciuto';
     msg.textContent   = 'Inserisci un IBAN italiano valido (inizia con IT e ha 27 caratteri).';
+    return;
+  }
+
+  // ── Check lunghezza: deve essere esattamente 27 caratteri ──
+  const cleanLen = raw.replace(/\s/g,'').toUpperCase().length;
+  if (cleanLen !== 27) {
+    risultato.className = 'error';
+    icon.textContent  = '❌';
+    title.textContent = `IBAN non valido — ${cleanLen} caratteri inseriti`;
+    msg.textContent   = `Un IBAN italiano deve contenere esattamente 27 caratteri. Ne hai inseriti ${cleanLen}: ${cleanLen < 27 ? `mancano ${27 - cleanLen}` : `sono ${cleanLen - 27} in più`}.`;
     return;
   }
 
